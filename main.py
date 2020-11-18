@@ -240,3 +240,55 @@ def start_pars():
     create_rare_card()
     create_main_table()
     parser_to_sql()
+
+
+def insert_data(addon_name: str, rare_name=()):
+    with OpenDatabase(dbconfig) as cursor:
+        sql = """
+            SELECT MAX(addon_pack_id)
+            FROM main_table
+            WHERE addon_id = (SELECT addon_id FROM addon WHERE addon_name = %s)
+            """
+        cursor.execute(sql, (addon_name,))
+        addon_pack_id = cursor.fetchone()[0] + 1
+        if rare_name:
+            for card, rare_name in enumerate(rare_name, 1):
+                sql = """
+                    INSERT INTO main_table(
+                        addon_id,
+                        card_id,
+                        rare_id,
+                        addon_pack_id
+                        )
+                    VALUES (
+                        (SELECT addon_id FROM addon WHERE addon_name = %s),
+                        %s,
+                        (SELECT rare_id FROM rare WHERE rare_name = %s),
+                        %s
+                        );
+                    """
+                cursor.execute(sql, (addon_name,
+                                     card,
+                                     rare_name,
+                                     addon_pack_id)
+                               )
+        else:
+            sql = """
+                INSERT INTO main_table(
+                    addon_id,
+                    card_id,
+                    rare_id,
+                    addon_pack_id
+                    )
+                VALUES (
+                        (SELECT addon_id FROM addon WHERE addon_name = %s),
+                        %s,
+                        %s,
+                        %s
+                        );
+                """
+            cursor.execute(sql, (addon_name,
+                                 6,
+                                 9,
+                                 addon_pack_id)
+                           )
