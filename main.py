@@ -292,3 +292,27 @@ def insert_data(addon_name: str, rare_name=()):
                                  9,
                                  addon_pack_id)
                            )
+
+
+def show_results():
+    with OpenDatabase(dbconfig) as cursor:
+        sql = """
+            SELECT
+                m.addon_pack_id AS 'Addon Pack Number',
+                a.addon_name AS 'Addon Name',
+                c.card_number AS 'Card Number',
+                r.rare_name AS 'Rare Type'
+            FROM
+                addon AS a
+            INNER JOIN
+                main_table AS m
+                ON a.addon_id = m.addon_id
+            INNER JOIN
+                card AS c
+                ON m.card_id = c.card_id
+            INNER JOIN
+                rare AS r
+                ON m.rare_id = r.rare_id
+            ORDER BY m.num_record;
+            """
+        cursor.execute(sql)
