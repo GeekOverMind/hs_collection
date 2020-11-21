@@ -1,0 +1,68 @@
+.testbutton {
+	display: inline-block;
+	position: relative;
+	background-color: #006fb2;
+	border: solid 1px #00aeff;
+	font-family:"Open Sans", Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1;
+	color: #fff;
+	padding: 10px 50px;
+	outline-offset: 2px;
+	text-decoration: none;
+	text-align: center;
+	cursor: pointer;
+	overflow: visible;
+	max-width: 100%;
+	transition: color 200ms, background-color 200ms, border-color 200ms
+}
+
+.testbutton:hover,.testbutton:focus {
+	background-color: #007bc6;
+	border: solid 1px #79d4ff;
+	text-decoration: none;
+	color: #fff
+}
+
+.testbutton:active {
+	background-color: #00629E;
+	border: solid 1px #007bc6;
+	text-decoration: none;
+	color: rgba(255, 255, 255, 0.8)
+}
+
+.testbutton:disabled, .testbutton.is-disabled {
+	background-color: rgba(27, 30, 39, 0.8);
+	border: solid 1px rgba(27, 30, 39, 0.8);
+	text-decoration: none;
+	color: rgba(0, 123, 198, 0.15)
+}
+
+.testbutton.is-full {
+	width: 100%
+}
+
+.testbutton.is-tertiary {
+	background-color: rgba(0, 0, 0, 0.2);
+	border: solid 1px rgba(255, 255, 255, 0.15);
+	color: #00aeff
+}
+
+.testbutton.is-tertiary:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+	border: solid 1px rgba(255, 255, 255, 0.3);
+	color: #91e4ff
+}
+
+.testbutton.is-tertiary:active {
+	background-color: rgba(0, 0, 0, 0.3);
+	border: solid 1px rgba(255, 255, 255, 0.15);
+	color: rgba(145, 228, 255, 0.8)
+}
+
+.testbutton.is-tertiary:disabled, .testbutton.is-tertiary.is-disabled {
+	background-color: rgba(0, 0, 0, 0.2);
+	border: solid 1px rgba(255, 255, 255, 0.05);
+	color: rgba(0, 174, 255, 0.15)
+}
