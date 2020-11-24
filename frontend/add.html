@@ -1,34 +1,29 @@
 {% extends 'base.html' %}
 {% block body %}
     <div>
-        <p>
-            <a class="addon"><img src="img/classic.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/goldpack.jpg" height="200" width="150"></a>
-            <a class="addon"><img src="img/wog.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/gvg.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/gt.png" height="200" width="150"></a>
-        </p>
+        {% if not the_addon %}
+            {% for name in addon %}
+                <p>
+                    <a class="addon" href="{{ url_for('insert', addon=name) }}">
+                        <img src="{{ url_for('frontend', filename=f'img/{name}.png') }}" height="200" width="150"></a>
+                </p>
+            {% endfor %}
 
-        <p>
-            <a class="addon"><img src="img/gadjetzan.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/ungoro.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/tft.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/k&c.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/witchwood.png"></a>
-        </p>
+        {% else %}
+            {% if inserted %}
+                Добавить кнопки: на главную; к выбору аддонов
 
-        <p>
-            <a class="addon"><img src="img/boomsday.png"></a>
-            <a class="addon"><img src="img/rr.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/ros.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/sou.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/dod.png" height="200" width="150"></a>
-        </p>
-
-        <p>
-            <a class="addon"><img src="img/dragon.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/aoe.png" height="200" width="150"></a>
-            <a class="addon"><img src="img/scholomance.png" height="200" width="150"></a>
-        </p>
+            {% else %}
+                <form class="" method='POST' action='/add/complete'>
+                    <select name="raretype[]">
+                        {% for id, name in raretype.items() %}
+                            <option value="{{ id }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="radio" name="values[]" value="2">Повышенная<br>
+                    <input type="submit" class="toServer" value="сохранить">
+                </form>
+            {% endif %}
+        {% endif %}
     </div>
 {% endblock %}
