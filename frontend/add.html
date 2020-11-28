@@ -1,29 +1,32 @@
 {% extends 'base.html' %}
 {% block body %}
     <div>
-        {% if not the_addon %}
-            {% for name in addon %}
-                <p>
-                    <a class="addon" href="{{ url_for('insert', addon=name) }}">
-                        <img src="{{ url_for('frontend', filename=f'img/{name}.png') }}" height="200" width="150"></a>
-                </p>
-            {% endfor %}
+        {% if the_addons %}
+	        {% for addon_id in the_addons %}
+		        <a class="addon" href="{{ url_for('insert', addon=addon_id) }}">
+			        <img src="{{ url_for('static', filename='img/%s.png' %addon_id) }}" height="200" width="150"></a>
+	    {% endfor %}
 
-        {% else %}
-            {% if inserted %}
-                Добавить кнопки: на главную; к выбору аддонов
-
-            {% else %}
-                <form class="" method='POST' action='/add/complete'>
-                    <select name="raretype[]">
-                        {% for id, name in raretype.items() %}
-                            <option value="{{ id }}">{{ name }}</option>
+        {% elif the_addon_id %}
+	        <img src="{{ url_for('static', filename='img/%s.png' %the_addon_id) }}" height="200" width="150">
+	        <form class="" method="POST" action="{{ url_for('insert', addon=the_addon_id) }}">
+                {% for field in range(1, 6) %}
+                    <select name="the_pack">
+                        {% for addon_id, rare_name in the_rare.items() %}
+                            <option value="{{ addon_id }}">{{ rare_name }}</option>
                         {% endfor %}
                     </select>
-                    <input type="radio" name="values[]" value="2">Повышенная<br>
-                    <input type="submit" class="toServer" value="сохранить">
-                </form>
-            {% endif %}
+                {% endfor %}
+                <p>
+                    <input type="submit" class="testbutton" value="сохранить">
+                </p>
+            </form>
+
+        {% elif the_finish %}
+            <h2>Данные успешно сохранены</h2>
+            <p>
+                <a class="testbutton" href="{{ url_for('insert') }}">Добавить записи</a>
+            </p>
         {% endif %}
     </div>
 {% endblock %}

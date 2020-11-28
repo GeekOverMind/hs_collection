@@ -2,12 +2,19 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>{{ title }}</title>
-        <link type="text/css" rel="stylesheet" href="frontend/index.css"/>
+        <title>{{ the_title }}</title>
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index.css') }}"/>
     </head>
     <body>
         {% block body %}
 
         {% endblock %}
+    <footer>
+        {% if the_title != 'Главная' %}
+            <p>
+                <a class="testbutton" href="{{ url_for('index') }}">На главную</a>
+            </p>
+        {% endif %}
+    </footer>
     </body>
 </html>

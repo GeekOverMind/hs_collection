@@ -1,8 +1,13 @@
 body {
     background-image: url("img/background.jpg");
     /*font-family: Arial, Verdana, sans-serif;*/
+    font-family: "Segoe UI", Arial, sans-serif;
     text-align: center;
     margin: 0px;
+}
+
+h2 {
+    font-size: 20px;
 }
 
 .testbutton {
