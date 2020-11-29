@@ -11,7 +11,7 @@ db_config = {
     'user': 'user_pc',
     'password': '1235',
     'database': 'hs_collection'
-}
+    }
 
 
 class OpenDatabase:
@@ -70,7 +70,7 @@ def create_database():
         host='localhost',
         user='user_pc',
         password='1235'
-    )
+        )
     cursor = conn.cursor()
     sql = """
         DROP DATABASE IF EXISTS hs_collection;
@@ -107,7 +107,7 @@ def create_card():
         'fourth',
         'fifth',
         'empty'
-    )
+        )
 
     with OpenDatabase(db_config) as cursor:
         sql = """
@@ -134,7 +134,7 @@ def create_rare_card():
         'gold epic',
         'gold legendary',
         ''
-    )
+        )
 
     with OpenDatabase(db_config) as cursor:
         sql = """
@@ -178,7 +178,6 @@ def parser_to_sql():
     with OpenDatabase(db_config) as cursor:
 
         addon_id = 1
-
         rare_name = (
             'common',
             'rare',
@@ -209,11 +208,13 @@ def parser_to_sql():
                                     )
                                 VALUES (%s, %s, %s, %s);
                                 """
-                            cursor.execute(sql, (addon_id,
-                                                 card_id,
-                                                 rare_id,
-                                                 pack_id)
-                                           )
+                            cursor.execute(sql, (
+                                addon_id,
+                                card_id,
+                                rare_id,
+                                pack_id
+                                )
+                            )
                             card_id += 1
                     else:
                         check = str(data_frame.iloc[pack_id - 1][data_frame.columns[num - 1]])
@@ -229,13 +230,20 @@ def parser_to_sql():
                                     rare_id,
                                     addon_pack_id
                                     )
-                                VALUES (%s, %s, %s, %s);
+                                VALUES (
+                                    %s,
+                                    %s,
+                                    %s,
+                                    %s
+                                    );
                                 """
-                            cursor.execute(sql, (addon_id,
-                                                 6,
-                                                 9,
-                                                 pack_id)
-                                           )
+                            cursor.execute(sql, (
+                                addon_id,
+                                6,
+                                9,
+                                pack_id
+                                )
+                            )
                 addon_id += 1
 
 
@@ -274,11 +282,13 @@ def insert_data(addon_name: str, rare_name=()):
                         %s
                         );
                     """
-                cursor.execute(sql, (addon_name,
-                                     card,
-                                     rare_name,
-                                     addon_pack_id)
-                               )
+                cursor.execute(sql, (
+                    addon_name,
+                    card,
+                    rare_name,
+                    addon_pack_id
+                    )
+                )
         else:
             sql = """
                 INSERT INTO main_table(
@@ -288,17 +298,19 @@ def insert_data(addon_name: str, rare_name=()):
                     addon_pack_id
                     )
                 VALUES (
-                        (SELECT addon_id FROM addon WHERE addon_name = %s),
-                        %s,
-                        %s,
-                        %s
-                        );
+                    (SELECT addon_id FROM addon WHERE addon_name = %s),
+                    %s,
+                    %s,
+                    %s
+                    );
                 """
-            cursor.execute(sql, (addon_name,
-                                 6,
-                                 9,
-                                 addon_pack_id)
-                           )
+            cursor.execute(sql, (
+                addon_name,
+                6,
+                9,
+                addon_pack_id
+                )
+            )
 
 
 # test function
@@ -306,20 +318,20 @@ def show_results():
     with OpenDatabase(db_config) as cursor:
         sql = """
             SELECT
-                m.addon_pack_id AS 'Addon Pack Number',
-                a.addon_name AS 'Addon Name',
-                c.card_number AS 'Card Number',
-                r.rare_name AS 'Rare Type'
+                m.addon_pack_id         'Addon Pack Number',
+                a.addon_name            'Addon Name',
+                c.card_number           'Card Number',
+                r.rare_name             'Rare Type'
             FROM
-                addon AS a
+                addon                   a
             INNER JOIN
-                main_table AS m
+                main_table              m
                 ON a.addon_id = m.addon_id
             INNER JOIN
-                card AS c
+                card                    c
                 ON m.card_id = c.card_id
             INNER JOIN
-                rare AS r
+                rare                    r
                 ON m.rare_id = r.rare_id
             ORDER BY m.num_record;
             """
