@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div>
+        {% if the_addons %}
+	        {% for addon_id in the_addons %}
+		        <a class="addon" href="{{ url_for('insert', addon=addon_id) }}">
+			        <img src="{{ url_for('static', filename='img/addons/%s.png' %addon_id) }}"></a>
+	    {% endfor %}
+
+        {% elif the_addon_id %}
+	        <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}">
+	        <form class="" method="POST" action="{{ url_for('insert', addon=the_addon_id) }}">
+                <table>
+                    <tr>
+                        {% for row in range(1, 6) %}
+                            <td>
+                                <img src="{{ url_for('static', filename='img/cardback.png') }}">
+                            </td>
+                        {% endfor %}
+                    </tr>
+
+                    <tr>
+                        {% for field in range(1, 6) %}
+                            <td>
+                                <select name="the_pack">
+                                    {% for addon_id, rare_name in the_rare.items() %}
+                                        {% if loop.first %}
+                                            <option value="0" selected="selected"></option>
+                                        {% endif %}
+
+                                        <option value="{{ addon_id }}">{{ rare_name }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </table>
+
+                <p>
+                    <input type="submit" class="testbutton" value="сохранить">
+                </p>
+            </form>
+
+        {% elif the_finish %}
+            <h2>Данные успешно сохранены</h2>
+            <p>
+                <a class="testbutton" href="{{ url_for('insert') }}">Добавить записи</a>
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}
