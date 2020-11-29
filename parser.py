@@ -105,8 +105,7 @@ def create_card():
         'second',
         'third',
         'fourth',
-        'fifth',
-        'empty'
+        'fifth'
         )
 
     with OpenDatabase(db_config) as cursor:
@@ -132,8 +131,7 @@ def create_rare_card():
         'gold common',
         'gold rare',
         'gold epic',
-        'gold legendary',
-        ''
+        'gold legendary'
         )
 
     with OpenDatabase(db_config) as cursor:
@@ -168,13 +166,62 @@ def create_main_table():
                 CONSTRAINT rare_rare_id_fk
                 FOREIGN KEY (rare_id)
                 REFERENCES rare (rare_id),
-                UNIQUE KEY unduplicated_record (addon_id, addon_pack_id, card_id)
+                UNIQUE KEY unduplicated_record (addon_id, addon_pack_id, card_id),
+                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """
         cursor.execute(sql)
 
 
 def parser_to_sql():
+    def insert_rare():
+        _sql = """
+            INSERT INTO main_table(
+                addon_id,
+                card_id,
+                rare_id,
+                addon_pack_id
+                )
+            VALUES (
+                %s,
+                %s,
+                %s,
+                %s
+                );
+            """
+        cursor.execute(_sql, (
+            addon_id,
+            card_id,
+            2,
+            pack_id
+        )
+                       )
+        print(addon_id, pack_id, card_id, rare_name[1], sep=': ')
+
+    def insert_common():
+        _sql = """
+            INSERT INTO main_table(
+                addon_id,
+                card_id,
+                rare_id,
+                addon_pack_id
+                )
+            VALUES (
+                %s,
+                %s,
+                %s,
+                %s
+                );
+            """
+        cursor.execute(_sql, (
+            addon_id,
+            card_id,
+            1,
+            pack_id
+            )
+        )
+        print(addon_id, pack_id, card_id, rare_name[0], sep=': ')
+
     with OpenDatabase(db_config) as cursor:
 
         addon_id = 1
@@ -186,8 +233,7 @@ def parser_to_sql():
             'gold common',
             'gold rare',
             'gold epic',
-            'gold legendary',
-            ''
+            'gold legendary'
         )
 
         for num, col in enumerate(data_frame.columns):
@@ -196,33 +242,10 @@ def parser_to_sql():
                     if isinstance(value, str):
                         pack = value.split(', ')
                         card_id = 1
+                        other_card = 5 - len(pack)
                         for card in pack:
                             print(addon_id, pack_id, card_id, card, sep=': ')
                             rare_id = rare_name.index(card) + 1
-                            sql = """
-                                INSERT INTO main_table(
-                                    addon_id,
-                                    card_id,
-                                    rare_id,
-                                    addon_pack_id
-                                    )
-                                VALUES (%s, %s, %s, %s);
-                                """
-                            cursor.execute(sql, (
-                                addon_id,
-                                card_id,
-                                rare_id,
-                                pack_id
-                                )
-                            )
-                            card_id += 1
-                    else:
-                        check = str(data_frame.iloc[pack_id - 1][data_frame.columns[num - 1]])
-                        if 'nan' in check:
-                            # if isinstance(data_frame.iloc[pack_id - 1][data_frame.columns[num - 1]], float):
-                            break
-                        else:
-                            print(addon_id, pack_id, 'NONE', sep=': ')
                             sql = """
                                 INSERT INTO main_table(
                                     addon_id,
@@ -239,11 +262,27 @@ def parser_to_sql():
                                 """
                             cursor.execute(sql, (
                                 addon_id,
-                                6,
-                                9,
+                                card_id,
+                                rare_id,
                                 pack_id
                                 )
                             )
+                            card_id += 1
+                        if other_card:
+                            for other_card_id in range(other_card):
+                                insert_common()
+                                card_id += 1
+                    else:
+                        check = str(data_frame.iloc[pack_id - 1][data_frame.columns[num - 1]])
+                        if 'nan' in check:
+                            # if isinstance(data_frame.iloc[pack_id - 1][data_frame.columns[num - 1]], float):
+                            break
+                        else:
+                            for card_id in range(1, 6):
+                                if card_id == 1:
+                                    insert_rare()
+                                else:
+                                    insert_common()
                 addon_id += 1
 
 
@@ -321,7 +360,8 @@ def show_results():
                 m.addon_pack_id         'Addon Pack Number',
                 a.addon_name            'Addon Name',
                 c.card_number           'Card Number',
-                r.rare_name             'Rare Type'
+                r.rare_name             'Rare Type',
+                m.date                  'Data'
             FROM
                 addon                   a
             INNER JOIN

@@ -99,7 +99,8 @@ def insert(addon=None):
                                 %s
                                 );
                             """
-                        cursor.execute(sql, (addon,
+                        cursor.execute(sql, (
+                            addon,
                             pack_id,
                             int(rare_id),
                             card_id
