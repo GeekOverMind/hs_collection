@@ -10,6 +10,24 @@ h2 {
     font-size: 20px;
 }
 
+.cardSelected {
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
+    padding: 0px;
+}
+
+table {
+    width: 100%;
+    padding: 0px;
+}
+
+td, th, tr {
+    padding: 0px;
+    vertical-align: center;
+    text-align: center;
+}
+
 .testbutton {
 	display: inline-block;
 	position: relative;

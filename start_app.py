@@ -140,9 +140,26 @@ def insert(addon=None):
                 return redirect(url_for('index'))
 
 
-@app.route('/view')
+@app.route('/view', methods=['POST'])
 def view():
-    pass
+    with OpenDatabase(db_config) as cursor:
+        sql = """
+            SELECT addon_id, addon_name
+            FROM addon;
+            """
+        cursor.execute(sql)
+        addon = dict(cursor.fetchall())
+
+        # sql = """
+        #     SELECT addon_pack_id
+        #     FROM main;
+        #     """
+        # cursor.execute(sql)
+        # addon = dict(cursor.fetchall())
+        return render_template(
+            'view.html',
+            the_addon=addon,
+            )
 
 
 if __name__ == '__main__':
