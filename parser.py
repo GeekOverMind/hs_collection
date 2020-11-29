@@ -6,12 +6,12 @@ table_name = 'Packs'
 with pd.ExcelFile(file_xlsx) as table:
     data_frame = table.parse(table_name)
 
-dbconfig = {
+db_config = {
     'host': 'localhost',
     'user': 'user_pc',
     'password': '1235',
     'database': 'hs_collection'
-}
+    }
 
 
 class OpenDatabase:
@@ -52,7 +52,7 @@ def get_columns_name(df):
         return addon_name
 
 
-def get_hash(df):
+def get_addon_name(df):
     addon_name = []
     x = 1
     for name in df[0:0]:  # first string in a table
@@ -70,17 +70,23 @@ def create_database():
         host='localhost',
         user='user_pc',
         password='1235'
-    )
+        )
     cursor = conn.cursor()
-    sql = """CREATE DATABASE IF NOT EXISTS hs_collection"""
+    sql = """
+        DROP DATABASE IF EXISTS hs_collection;
+        """
+    cursor.execute(sql)
+    sql = """
+        CREATE DATABASE hs_collection;
+        """
     cursor.execute(sql)
     cursor.close()
     conn.close()
 
 
 def create_addon():
-    with OpenDatabase(dbconfig) as cursor:
-        addon_name = get_hash(data_frame)
+    with OpenDatabase(db_config) as cursor:
+        addon_name = get_addon_name(data_frame)
         sql = """
             CREATE TABLE IF NOT EXISTS addon(
                 addon_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -99,11 +105,10 @@ def create_card():
         'second',
         'third',
         'fourth',
-        'fifth',
-        'empty'
-    )
+        'fifth'
+        )
 
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             CREATE TABLE IF NOT EXISTS card(
                 card_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -126,11 +131,10 @@ def create_rare_card():
         'gold common',
         'gold rare',
         'gold epic',
-        'gold legendary',
-        'empty'
-    )
+        'gold legendary'
+        )
 
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             CREATE TABLE IF NOT EXISTS rare(
                 rare_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -145,7 +149,7 @@ def create_rare_card():
 
 
 def create_main_table():
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             CREATE TABLE IF NOT EXISTS main_table(
                 num_record INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -162,17 +166,65 @@ def create_main_table():
                 CONSTRAINT rare_rare_id_fk
                 FOREIGN KEY (rare_id)
                 REFERENCES rare (rare_id),
-                UNIQUE KEY unduplicated_record (addon_id, addon_pack_id, card_id)
+                UNIQUE KEY unduplicated_record (addon_id, addon_pack_id, card_id),
+                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """
         cursor.execute(sql)
 
 
 def parser_to_sql():
-    with OpenDatabase(dbconfig) as cursor:
+    def insert_rare():
+        _sql = """
+            INSERT INTO main_table(
+                addon_id,
+                card_id,
+                rare_id,
+                addon_pack_id
+                )
+            VALUES (
+                %s,
+                %s,
+                %s,
+                %s
+                );
+            """
+        cursor.execute(_sql, (
+            addon_id,
+            card_id,
+            2,
+            pack_id
+        )
+                       )
+        print(addon_id, pack_id, card_id, rare_name[1], sep=': ')
+
+    def insert_common():
+        _sql = """
+            INSERT INTO main_table(
+                addon_id,
+                card_id,
+                rare_id,
+                addon_pack_id
+                )
+            VALUES (
+                %s,
+                %s,
+                %s,
+                %s
+                );
+            """
+        cursor.execute(_sql, (
+            addon_id,
+            card_id,
+            1,
+            pack_id
+            )
+        )
+        print(addon_id, pack_id, card_id, rare_name[0], sep=': ')
+
+    with OpenDatabase(db_config) as cursor:
 
         addon_id = 1
-
         rare_name = (
             'common',
             'rare',
@@ -181,8 +233,7 @@ def parser_to_sql():
             'gold common',
             'gold rare',
             'gold epic',
-            'gold legendary',
-            'empty'
+            'gold legendary'
         )
 
         for num, col in enumerate(data_frame.columns):
@@ -191,6 +242,7 @@ def parser_to_sql():
                     if isinstance(value, str):
                         pack = value.split(', ')
                         card_id = 1
+                        other_card = 5 - len(pack)
                         for card in pack:
                             print(addon_id, pack_id, card_id, card, sep=': ')
                             rare_id = rare_name.index(card) + 1
@@ -201,35 +253,36 @@ def parser_to_sql():
                                     rare_id,
                                     addon_pack_id
                                     )
-                                VALUES (%s, %s, %s, %s);
+                                VALUES (
+                                    %s,
+                                    %s,
+                                    %s,
+                                    %s
+                                    );
                                 """
-                            cursor.execute(sql, (addon_id,
-                                                 card_id,
-                                                 rare_id,
-                                                 pack_id)
-                                           )
+                            cursor.execute(sql, (
+                                addon_id,
+                                card_id,
+                                rare_id,
+                                pack_id
+                                )
+                            )
                             card_id += 1
+                        if other_card:
+                            for other_card_id in range(other_card):
+                                insert_common()
+                                card_id += 1
                     else:
                         check = str(data_frame.iloc[pack_id - 1][data_frame.columns[num - 1]])
                         if 'nan' in check:
                             # if isinstance(data_frame.iloc[pack_id - 1][data_frame.columns[num - 1]], float):
                             break
                         else:
-                            print(addon_id, pack_id, 'NONE', sep=': ')
-                            sql = """
-                                INSERT INTO main_table(
-                                    addon_id,
-                                    card_id,
-                                    rare_id,
-                                    addon_pack_id
-                                    )
-                                VALUES (%s, %s, %s, %s);
-                                """
-                            cursor.execute(sql, (addon_id,
-                                                 6,
-                                                 9,
-                                                 pack_id)
-                                           )
+                            for card_id in range(1, 6):
+                                if card_id == 1:
+                                    insert_rare()
+                                else:
+                                    insert_common()
                 addon_id += 1
 
 
@@ -242,8 +295,9 @@ def start_pars():
     parser_to_sql()
 
 
+# test function
 def insert_data(addon_name: str, rare_name=()):
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             SELECT MAX(addon_pack_id)
             FROM main_table
@@ -267,11 +321,13 @@ def insert_data(addon_name: str, rare_name=()):
                         %s
                         );
                     """
-                cursor.execute(sql, (addon_name,
-                                     card,
-                                     rare_name,
-                                     addon_pack_id)
-                               )
+                cursor.execute(sql, (
+                    addon_name,
+                    card,
+                    rare_name,
+                    addon_pack_id
+                    )
+                )
         else:
             sql = """
                 INSERT INTO main_table(
@@ -281,37 +337,41 @@ def insert_data(addon_name: str, rare_name=()):
                     addon_pack_id
                     )
                 VALUES (
-                        (SELECT addon_id FROM addon WHERE addon_name = %s),
-                        %s,
-                        %s,
-                        %s
-                        );
+                    (SELECT addon_id FROM addon WHERE addon_name = %s),
+                    %s,
+                    %s,
+                    %s
+                    );
                 """
-            cursor.execute(sql, (addon_name,
-                                 6,
-                                 9,
-                                 addon_pack_id)
-                           )
+            cursor.execute(sql, (
+                addon_name,
+                6,
+                9,
+                addon_pack_id
+                )
+            )
 
 
+# test function
 def show_results():
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             SELECT
-                m.addon_pack_id AS 'Addon Pack Number',
-                a.addon_name AS 'Addon Name',
-                c.card_number AS 'Card Number',
-                r.rare_name AS 'Rare Type'
+                m.addon_pack_id         'Addon Pack Number',
+                a.addon_name            'Addon Name',
+                c.card_number           'Card Number',
+                r.rare_name             'Rare Type',
+                m.date                  'Data'
             FROM
-                addon AS a
+                addon                   a
             INNER JOIN
-                main_table AS m
+                main_table              m
                 ON a.addon_id = m.addon_id
             INNER JOIN
-                card AS c
+                card                    c
                 ON m.card_id = c.card_id
             INNER JOIN
-                rare AS r
+                rare                    r
                 ON m.rare_id = r.rare_id
             ORDER BY m.num_record;
             """
