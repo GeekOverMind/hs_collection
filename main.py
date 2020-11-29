@@ -6,7 +6,7 @@ table_name = 'Packs'
 with pd.ExcelFile(file_xlsx) as table:
     data_frame = table.parse(table_name)
 
-dbconfig = {
+db_config = {
     'host': 'localhost',
     'user': 'user_pc',
     'password': '1235',
@@ -52,7 +52,7 @@ def get_columns_name(df):
         return addon_name
 
 
-def get_hash(df):
+def get_addon_name(df):
     addon_name = []
     x = 1
     for name in df[0:0]:  # first string in a table
@@ -72,15 +72,21 @@ def create_database():
         password='1235'
     )
     cursor = conn.cursor()
-    sql = """CREATE DATABASE IF NOT EXISTS hs_collection"""
+    sql = """
+        DROP DATABASE IF EXISTS hs_collection;
+        """
+    cursor.execute(sql)
+    sql = """
+        CREATE DATABASE hs_collection;
+        """
     cursor.execute(sql)
     cursor.close()
     conn.close()
 
 
 def create_addon():
-    with OpenDatabase(dbconfig) as cursor:
-        addon_name = get_hash(data_frame)
+    with OpenDatabase(db_config) as cursor:
+        addon_name = get_addon_name(data_frame)
         sql = """
             CREATE TABLE IF NOT EXISTS addon(
                 addon_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -103,7 +109,7 @@ def create_card():
         'empty'
     )
 
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             CREATE TABLE IF NOT EXISTS card(
                 card_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -127,10 +133,10 @@ def create_rare_card():
         'gold rare',
         'gold epic',
         'gold legendary',
-        'empty'
+        ''
     )
 
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             CREATE TABLE IF NOT EXISTS rare(
                 rare_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -145,7 +151,7 @@ def create_rare_card():
 
 
 def create_main_table():
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             CREATE TABLE IF NOT EXISTS main_table(
                 num_record INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -169,7 +175,7 @@ def create_main_table():
 
 
 def parser_to_sql():
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
 
         addon_id = 1
 
@@ -182,7 +188,7 @@ def parser_to_sql():
             'gold rare',
             'gold epic',
             'gold legendary',
-            'empty'
+            ''
         )
 
         for num, col in enumerate(data_frame.columns):
@@ -242,8 +248,9 @@ def start_pars():
     parser_to_sql()
 
 
+# test function
 def insert_data(addon_name: str, rare_name=()):
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             SELECT MAX(addon_pack_id)
             FROM main_table
@@ -294,8 +301,9 @@ def insert_data(addon_name: str, rare_name=()):
                            )
 
 
+# test function
 def show_results():
-    with OpenDatabase(dbconfig) as cursor:
+    with OpenDatabase(db_config) as cursor:
         sql = """
             SELECT
                 m.addon_pack_id AS 'Addon Pack Number',
