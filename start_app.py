@@ -3,8 +3,6 @@ import mysql.connector
 
 
 app = Flask(__name__, static_folder="frontend/", template_folder="frontend")
-
-
 db_config = {
     'host': 'localhost',
     'user': 'user_pc',
@@ -101,8 +99,7 @@ def insert(addon=None):
                                 %s
                                 );
                             """
-                        cursor.execute(sql, (
-                            addon,
+                        cursor.execute(sql, (addon,
                             pack_id,
                             int(rare_id),
                             card_id
