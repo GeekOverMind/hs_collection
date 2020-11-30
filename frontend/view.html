@@ -1,36 +1,61 @@
 {% extends 'base.html' %}
 {% block body %}
-    <select name="Addon">
-        {% for the_addon_id, the_addon_name in the_addon.items() %}
-            <option name="{{ the_addon_name }}" value="{{ the_addon_id }}">{{ the_addon_name }}</option>
-        {% endfor %}
-    </select>
+    {% if the_addon %}
+        <form class="" method="POST" action="/view/data">
+            <select name="the_addon">
+                {% for the_addon_id, the_addon_name in the_addon.items() %}
+                    {% if loop.first %}
+                        <option name="All" value="0">All</option>
+                    {% endif %}
 
-    <select name="Pack">
-        {% for the_addon_id, the_addon_name in the_addon.items() %}
-            <option name="{{ the_addon_name }}" value="{{ the_addon_id }}">{{ the_addon_name }}</option>
-        {% endfor %}
-    </select>
+                    <option name="{{ the_addon_name }}" value="{{ the_addon_id }}">{{ the_addon_name }}</option>
+                {% endfor %}
+            </select>
 
-    <select name="Rare">
-        <option name="" value="">Addon</option>
-        <option name="" value="">Pack</option>
-        <option name="" value="">Rare</option>
-    </select>
+            <select name="the_addon_pack_id">
+                {% for the_addon_id, the_addon_name in the_addon.items() %}
+                    {% if loop.first %}
+                        <option name="All" value="0">All</option>
+                    {% endif %}
 
-    <table>
-        <tr>
-            <th>Addon</th>
-            <th>Pack</th>
-            <th>Rare</th>
-        </tr>
-        {% for item in range(1, 4) %}
+                    <option name="{{ the_addon_name }}" value="{{ the_addon_id }}">{{ the_addon_name }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="the_rare">
+                {% for the_rare in range(1, 6) %}
+                    {% if loop.first %}
+                        <option name="All" value="0">All</option>
+                    {% endif %}
+
+                <option name="" value="{{ the_rare }}">{{ the_rare }}</option>
+                {% endfor %}
+
+            </select>
+
+            <p>
+                <input type="submit" class="testbutton" value="сохранить">
+            </p>
+        </form>
+    {% endif %}
+
+    {% if the_data %}
+        <table>
             <tr>
-                <td>{{ item }}</td>
-                <td>{{ item }}</td>
-                <td>{{ item }}</td>
+                <th>Addon</th>
+                <th>Pack</th>
+                <th>Rare</th>
+                <th>Date</th>
             </tr>
-        {% endfor %}
+            {% for the_addon_pack_id, the_addon_name, the_pack, the_date in the_data %}
+                <tr>
+                    <td>{{ the_addon_pack_id }}</td>
+                    <td>{{ the_addon_name }}</td>
+                    <td>{{ the_pack }}</td>
+                    <td>{{ the_date }}</td>
+                </tr>
+            {% endfor %}
 
-    </table>
+        </table>
+    {% endif %}
 {% endblock %}

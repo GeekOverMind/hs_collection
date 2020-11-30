@@ -140,26 +140,72 @@ def insert(addon=None):
                 return redirect(url_for('index'))
 
 
-@app.route('/view', methods=['POST'])
+@app.route('/view')
+@app.route('/view/data', methods=['POST'])
 def view():
     with OpenDatabase(db_config) as cursor:
-        sql = """
-            SELECT addon_id, addon_name
-            FROM addon;
-            """
-        cursor.execute(sql)
-        addon = dict(cursor.fetchall())
+        if request.method == 'POST':
+            selected_addon_id = int(request.form.get('the_addon'))
+            addon_pack_id = int(request.form.get('the_addon_pack_id'))
+            rare = int(request.form.get('the_rare'))
 
-        # sql = """
-        #     SELECT addon_pack_id
-        #     FROM main;
-        #     """
-        # cursor.execute(sql)
-        # addon = dict(cursor.fetchall())
-        return render_template(
-            'view.html',
-            the_addon=addon,
-            )
+            if selected_addon_id and addon_pack_id and rare:
+                sql = """
+                    SELECT
+                        m.addon_pack_id                     'Addon Pack Number',
+                        a.addon_name                        'Addon Name',
+                        GROUP_CONCAT(' ', r.rare_name)      'Rare Type',
+                        m.date                              'Data' 
+                    FROM
+                        addon                               a
+                    INNER JOIN
+                        main_table                          m
+                    ON a.addon_id = m.addon_id
+                    INNER JOIN
+                        rare								r
+                    ON m.rare_id = r.rare_id
+                    GROUP BY m.addon_pack_id, a.addon_name
+                    ORDER BY m.num_record;
+                    """
+                cursor.execute(sql, ())
+                # addon = dict(cursor.fetchall())
+            else:
+                sql = """
+                    SELECT
+                        m.addon_pack_id                     'Addon Pack Number',
+                        a.addon_name                        'Addon Name',
+                        GROUP_CONCAT(' ', r.rare_name)      'Rare Type',
+                        m.date                              'Data' 
+                    FROM
+                        addon                               a
+                    INNER JOIN
+                        main_table                          m
+                    ON a.addon_id = m.addon_id
+                    INNER JOIN
+                        rare								r
+                    ON m.rare_id = r.rare_id
+                    GROUP BY m.addon_pack_id, a.addon_name
+                    ORDER BY m.num_record;
+                    """
+                cursor.execute(sql)
+                data = ((addon_pack_id, addon_name, pack.lstrip(), date.strftime('%d.%m.%Y %H:%M:%S'))
+                        for addon_pack_id, addon_name, pack, date in cursor.fetchall())
+                return render_template(
+                    'view.html',
+                    the_data=data
+                    )
+        else:
+            sql = """
+                SELECT addon_id, addon_name
+                FROM addon;
+                """
+            cursor.execute(sql)
+            addon = dict(cursor.fetchall())
+
+            return render_template(
+                'view.html',
+                the_addon=addon,
+                )
 
 
 if __name__ == '__main__':
