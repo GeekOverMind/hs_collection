@@ -2,39 +2,29 @@
 {% block body %}
     {% if the_addon %}
         <form class="" method="POST" action="/view/data">
-            <select name="the_addon">
+            Выберете аддон: <select name="the_addon">
                 {% for the_addon_id, the_addon_name in the_addon.items() %}
                     {% if loop.first %}
-                        <option name="All" value="0">All</option>
+                        <option name="All addons" value="0">All</option>
                     {% endif %}
 
                     <option name="{{ the_addon_name }}" value="{{ the_addon_id }}">{{ the_addon_name }}</option>
                 {% endfor %}
             </select>
 
-            <select name="the_addon_pack_id">
-                {% for the_addon_id, the_addon_name in the_addon.items() %}
+            Выберете редкость: <select name="the_rare">
+                {% for the_rare_id, the_rare_name in the_rare.items() %}
                     {% if loop.first %}
-                        <option name="All" value="0">All</option>
+                        <option name="All rarities" value="0">All</option>
                     {% endif %}
 
-                    <option name="{{ the_addon_name }}" value="{{ the_addon_id }}">{{ the_addon_name }}</option>
-                {% endfor %}
-            </select>
-
-            <select name="the_rare">
-                {% for the_rare in range(1, 6) %}
-                    {% if loop.first %}
-                        <option name="All" value="0">All</option>
-                    {% endif %}
-
-                <option name="" value="{{ the_rare }}">{{ the_rare }}</option>
+                <option name="{{ the_rare_name }}" value="{{ the_rare_id }}">{{ the_rare_name }}</option>
                 {% endfor %}
 
             </select>
 
             <p>
-                <input type="submit" class="testbutton" value="сохранить">
+                <input type="submit" class="testbutton" value="Просмотреть">
             </p>
         </form>
     {% endif %}
@@ -42,10 +32,10 @@
     {% if the_data %}
         <table>
             <tr>
-                <th>Addon</th>
+                <th>Pack number in addon</th>
                 <th>Pack</th>
                 <th>Rare</th>
-                <th>Date</th>
+                <th>Opening date</th>
             </tr>
             {% for the_addon_pack_id, the_addon_name, the_pack, the_date in the_data %}
                 <tr>

@@ -2,12 +2,14 @@
 {% block body %}
     <div>
         {% if the_addons %}
-	        {% for addon_id in the_addons %}
-		        <a class="addon" href="{{ url_for('insert', addon=addon_id) }}">
-			        <img src="{{ url_for('static', filename='img/addons/%s.png' %addon_id) }}"></a>
+	        {% for the_addon_id, the_addon_name in the_addons.items() %}
+                <h2>{{ the_addon_name }}</h2>
+		        <a class="addon" href="{{ url_for('insert', addon=the_addon_id) }}">
+			        <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}"></a>
 	    {% endfor %}
 
         {% elif the_addon_id %}
+            <h2>{{ the_addon_name }}</h2>
 	        <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}">
             <div class="cardSelected">
                 <form class="" method="POST" action="{{ url_for('insert', addon=the_addon_id) }}">

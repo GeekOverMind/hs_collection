@@ -10,6 +10,10 @@ h2 {
     font-size: 20px;
 }
 
+div {
+    width: 100%;
+}
+
 .cardSelected {
     width: 60%;
     margin-left: 20%;
