@@ -11,9 +11,14 @@ h2 {
 }
 
 div {
-    width: 100%;
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
 }
 
+table.test {
+
+}
 .cardSelected {
     width: 60%;
     margin-left: 20%;
@@ -42,15 +47,15 @@ td, th, tr {
 	font-weight: 400;
 	line-height: 1;
 	color: #fff;
-	padding: 10px 50px;
+	padding: 10px 0px;
 	outline-offset: 2px;
 	text-decoration: none;
 	text-align: center;
 	cursor: pointer;
 	overflow: visible;
-	max-width: 100%;
+	/*max-width: 100%;*/
 	transition: color 200ms, background-color 200ms, border-color 200ms;
-	width: 175px;
+	width: 250px;
 }
 
 .testbutton:hover,.testbutton:focus {

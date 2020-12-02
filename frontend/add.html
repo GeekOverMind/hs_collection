@@ -2,11 +2,22 @@
 {% block body %}
     <div>
         {% if the_addons %}
-	        {% for the_addon_id, the_addon_name in the_addons.items() %}
-                <h2>{{ the_addon_name }}</h2>
-		        <a class="addon" href="{{ url_for('insert', addon=the_addon_id) }}">
-			        <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}"></a>
-	    {% endfor %}
+            <table class="test">
+
+                    {% for the_addon_id, the_addon_name in the_addons.items() %}
+                        {% if loop.index0 % 5 == 0 %}
+                            <tr>
+
+                            </tr>
+                        {% endif %}
+
+                        <td>
+                            <h2>{{ the_addon_name }}</h2>
+                            <a class="addon" href="{{ url_for('insert', addon=the_addon_id) }}">
+                                <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}"></a>
+                        </td>
+                    {% endfor %}
+            </table>
 
         {% elif the_addon_id %}
             <h2>{{ the_addon_name }}</h2>
