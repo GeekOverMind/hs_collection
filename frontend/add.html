@@ -1,25 +1,27 @@
 {% extends 'base.html' %}
 {% block body %}
-    <div class="main">
-        {% if the_addons %}
+    {% if the_addons %}
+        <div class="main">
             {% for the_addon_id, the_addon_name in the_addons.items() %}
                 <div class="addons">
-                    <div>
+                    <p>
                         <h2>{{ the_addon_name }}</h2>
-                    </div>
+                    </p>
 
-                    <div>
+                    <p>
                         <a class="addon" href="{{ url_for('insert', addon=the_addon_id) }}">
                             <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}"></a>
-                    </div>
+                    </p>
                 </div>
             {% endfor %}
+        </div>
 
         {% elif the_addon_id %}
-            <h2>{{ the_addon_name }}</h2>
-	        <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}">
             <div class="cardSelected">
-                <form class="" method="POST" action="{{ url_for('insert', addon=the_addon_id) }}">
+                <h2>{{ the_addon_name }}</h2>
+	            <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}">
+
+                <form method="POST" action="{{ url_for('insert', addon=the_addon_id) }}">
                     <table>
                         <tr>
                             {% for row in range(1, 6) %}
@@ -46,11 +48,11 @@
                                         </select>
 
                                     {% else %}
-                                    <select name="the_pack">
-                                        {% for addon_id, rare_name in the_rare.items() %}
-                                            <option value="{{ addon_id }}">{{ rare_name }}</option>
-                                        {% endfor %}
-                                    </select>
+                                        <select name="the_pack">
+                                            {% for addon_id, rare_name in the_rare.items() %}
+                                                <option value="{{ addon_id }}">{{ rare_name }}</option>
+                                            {% endfor %}
+                                        </select>
                                     {% endif %}
                                 </td>
                             {% endfor %}
@@ -69,5 +71,5 @@
                 <a class="testbutton" href="{{ url_for('insert') }}">Добавить записи</a>
             </p>
         {% endif %}
-    </div>
+
 {% endblock %}

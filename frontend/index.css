@@ -10,13 +10,13 @@ h2 {
     font-size: 20px;
 }
 
-div.main {
+.main {
     width: 50%;
     margin-left: 25%;
     margin-right: 25%;
 }
 
-div.addons {
+.addons {
     display: inline-block;
 }
 
@@ -29,6 +29,7 @@ div.addons {
 
 table {
     width: 100%;
+    margin: 0px;
     padding: 0px;
 }
 
