@@ -35,7 +35,7 @@
                             {% for field in range(1, 6) %}
                                 <td>
                                     {% if loop.first %}
-                                        <select name="the_pack">
+                                        <select class="pack" name="pack">
                                             {% for addon_id, rare_name in the_rare.items() %}
                                                 {% if loop.first %}
                                                     <option value="2" selected disabled>rare</option>
@@ -48,7 +48,7 @@
                                         </select>
 
                                     {% else %}
-                                        <select name="the_pack">
+                                        <select class="pack" name="the_pack">
                                             {% for addon_id, rare_name in the_rare.items() %}
                                                 <option value="{{ addon_id }}">{{ rare_name }}</option>
                                             {% endfor %}
