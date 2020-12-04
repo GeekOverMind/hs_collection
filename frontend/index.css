@@ -11,22 +11,22 @@ h2 {
     font-size: 20px;
 }
 
-.main {
+div.main {
     width: 50%;
     margin-left: 25%;
     margin-right: 25%;
 }
 
-.addons {
+div.addons {
     display: inline-block;
 }
 
-.view {
+div.view {
     display: inline-block;
-    margin: 20px;
+    margin: 10px;
 }
 
-.cardSelected {
+div.cardSelected {
     width: 60%;
     margin-left: 20%;
     margin-right: 20%;
@@ -47,7 +47,7 @@ td, th, tr {
     text-align: center;
 }
 
-.tableView {
+table.tableView {
     width: 98%;
     margin: 1%;
     padding: 0px;
@@ -55,7 +55,7 @@ td, th, tr {
     color: #dddddd;
 }
 
-td.tdView, th.thView, tr.trView {
+table.tableView td, table.tableView th, table.tableView tr {
     padding: 0px;
     vertical-align: center;
     text-align: center;
@@ -126,4 +126,3 @@ select.pack {
 	text-decoration: none;
 	color: #fff:
 }
-

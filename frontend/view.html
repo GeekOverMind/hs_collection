@@ -3,9 +3,7 @@
     {% if the_addon %}
         <form class="" method="POST" action="/view/data">
             <div class="view">
-                <p>
-                    <h2>Аддон:</h2>
-                </p>
+                <h2>Аддон:</h2>
                 <select name="the_addon">
                     {% for the_addon_id, the_addon_name in the_addon.items() %}
                         {% if loop.first %}
@@ -17,10 +15,8 @@
                 </select>
             </div>
 
-            <div class="addons">
-                <p>
-                    <h2>Редкость:</h2>
-                </p>
+            <div class="view">
+                <h2>Редкость:</h2>
                 <select name="the_rare">
                     {% for the_rare_id, the_rare_name in the_rare.items() %}
                         {% if loop.first %}
@@ -40,18 +36,18 @@
 
     {% if the_data %}
         <table class="tableView">
-            <tr class="trView">
-                <th class="thView">Pack number in addon</th>
-                <th class="thView">Pack</th>
-                <th class="thView">Rare</th>
-                <th class="thView">Opening date</th>
+            <tr>
+                <th>Pack number in addon</th>
+                <th>Pack</th>
+                <th>Rare</th>
+                <th>Opening date</th>
             </tr>
             {% for the_addon_pack_id, the_addon_name, the_pack, the_date in the_data %}
-                <tr class="trView">
-                    <td class="tdView">{{ the_addon_pack_id }}</td>
-                    <td class="tdView">{{ the_addon_name }}</td>
-                    <td class="tdView">{{ the_pack }}</td>
-                    <td class="tdView">{{ the_date }}</td>
+                <tr>
+                    <td>{{ the_addon_pack_id }}</td>
+                    <td>{{ the_addon_name }}</td>
+                    <td>{{ the_pack }}</td>
+                    <td>{{ the_date }}</td>
                 </tr>
             {% endfor %}
         </table>
