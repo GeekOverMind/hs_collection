@@ -1,5 +1,7 @@
 import mysql.connector
+from flask import make_response
 import pandas as pd
+
 
 file_xlsx = 'database_table.xlsx'
 table_name = 'Packs'
@@ -24,9 +26,15 @@ class OpenDatabase:
             self.cursor = self.conn.cursor()
             return self.cursor
         except mysql.connector.errors.InterfaceError as err:
-            print(f'Ошибка: {err}')
+            if __name__ == '__main__':
+                print(f'Ошибка: {err}')
+            elif __name__ == 'start_app':
+                return make_response(f'<h2>Ошибка: {err}</h2>')
         except mysql.connector.errors.ProgrammingError as err:
-            print(f'Ошибка: {err}')
+            if __name__ == '__main__':
+                print(f'Ошибка: {err}')
+            elif __name__ == 'start_app':
+                return make_response(f'<h2>Ошибка: {err}</h2>')
 
     def __exit__(self, exc_type, exc_value, exc_trace):
         self.conn.commit()
@@ -36,6 +44,8 @@ class OpenDatabase:
         if exc_type:
             with open('log_error.txt', 'a') as txt_file:
                 print(f'{exc_type}: {exc_value}', file=txt_file)
+                if __name__ == 'start_app':
+                    return make_response('<h2>Неполадки с базой данных</h2>')
 
 
 def get_columns_name(df):
@@ -66,20 +76,20 @@ def get_addon_name(df):
 
 
 def create_database():
-    conn = mysql.connector.connect(
-        host='localhost',
-        user='user_pc',
-        password='1235'
-        )
+    new_db_config = db_config
+    new_db_config.__delitem__('database')
+    conn = mysql.connector.connect(**new_db_config)
     cursor = conn.cursor()
     sql = """
         DROP DATABASE IF EXISTS hs_collection;
         """
     cursor.execute(sql)
+
     sql = """
         CREATE DATABASE hs_collection;
         """
     cursor.execute(sql)
+
     cursor.close()
     conn.close()
 
