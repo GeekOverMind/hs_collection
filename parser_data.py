@@ -1,6 +1,8 @@
 import mysql.connector
-from flask import make_response
 import pandas as pd
+
+if __name__ == 'start_app':
+    from flask import make_response
 
 
 file_xlsx = 'database_table.xlsx'
@@ -77,21 +79,17 @@ def get_addon_name(df):
 
 def create_database():
     new_db_config = db_config
-    new_db_config.__delitem__('database')
-    conn = mysql.connector.connect(**new_db_config)
-    cursor = conn.cursor()
-    sql = """
-        DROP DATABASE IF EXISTS hs_collection;
-        """
-    cursor.execute(sql)
+    del new_db_config['database']
+    with OpenDatabase(new_db_config) as cursor:
+        sql = """
+            DROP DATABASE IF EXISTS hs_collection;
+            """
+        cursor.execute(sql)
 
-    sql = """
-        CREATE DATABASE hs_collection;
-        """
-    cursor.execute(sql)
-
-    cursor.close()
-    conn.close()
+        sql = """
+            CREATE DATABASE hs_collection;
+            """
+        cursor.execute(sql)
 
 
 def create_addon():
