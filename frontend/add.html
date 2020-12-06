@@ -4,72 +4,93 @@
         <div class="main">
             {% for the_addon_id, the_addon_name in the_addons.items() %}
                 <div class="addons">
-                    <p>
-                        <h2>{{ the_addon_name }}</h2>
-                    </p>
-
+                    <h2>{{ the_addon_name }}</h2>
                     <p>
                         <a class="addon" href="{{ url_for('insert', addon=the_addon_id) }}">
-                            <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}"></a>
+                            <img src="{{ url_for('static', filename='img/addons/%s.png' % the_addon_id) }}"></a>
                     </p>
                 </div>
             {% endfor %}
         </div>
+        <a class="testbutton" href="{{ url_for('insert', addon='new')}}">Добавить новый</a>
+    {% endif %}
 
-        {% elif the_addon_id %}
-            <div class="cardSelected">
-                <h2>{{ the_addon_name }}</h2>
-	            <img src="{{ url_for('static', filename='img/addons/%s.png' %the_addon_id) }}">
-
-                <form method="POST" action="{{ url_for('insert', addon=the_addon_id) }}">
-                    <table>
-                        <tr>
-                            {% for row in range(1, 6) %}
-                                <td>
-                                    <img src="{{ url_for('static', filename='img/cardback.png') }}">
-                                </td>
-                            {% endfor %}
-                        </tr>
-
-                        <tr>
-                            {% for field in range(1, 6) %}
-                                <td>
-                                    {% if loop.first %}
-                                        <select class="pack" name="pack">
-                                            {% for addon_id, rare_name in the_rare.items() %}
-                                                {% if loop.first %}
-                                                    <option value="2" selected disabled>rare</option>
-                                                {% endif %}
-                                            {% endfor %}
-
-                                            {% for addon_id, rare_name in the_rare.items() %}
-                                                <option value="{{ addon_id }}">{{ rare_name }}</option>
-                                            {% endfor %}
-                                        </select>
-
-                                    {% else %}
-                                        <select class="pack" name="the_pack">
-                                            {% for addon_id, rare_name in the_rare.items() %}
-                                                <option value="{{ addon_id }}">{{ rare_name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    {% endif %}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                    </table>
-
-                    <p>
-                        <input type="submit" class="testbutton" value="сохранить">
-                    </p>
-                </form>
+    {% if the_new_addon %}
+        <form enctype="multipart/form-data" method='POST' action="{{ url_for('insert', addon=the_new_addon) }}">
+            <div class="newAddon">
+                <h2>Название аддона:</h2>
+                <input type="text" name="the_addon_name" required>
             </div>
 
-        {% elif the_finish %}
-            <h2>Данные успешно сохранены</h2>
+            <div class="newAddon">
+                <h2>Лого аддона:</h2>
+                <input accept="image/png" type="file" name="the_logo" required>
+            </div>
             <p>
-                <a class="testbutton" href="{{ url_for('insert') }}">Добавить записи</a>
+                <input class="testbutton" type="submit" value="Cохранить">
             </p>
-        {% endif %}
+        </form>
+    {% endif %}
+
+    {% if the_addon_added %}
+        <h2>Аддон "{{ the_addon_added }} добавлен!"</h2>
+    {% endif %}
+
+    {% if the_addon_id %}
+        <div class="cardSelected">
+            <h2>{{ the_addon_name }}</h2>
+            <img src="{{ url_for('static', filename='img/addons/%s.png' % the_addon_id) }}">
+
+            <form method="POST" action="{{ url_for('insert', addon=the_addon_id) }}">
+                <table>
+                    <tr>
+                        {% for row in range(1, 6) %}
+                            <td>
+                                <img src="{{ url_for('static', filename='img/cardback.png') }}">
+                            </td>
+                        {% endfor %}
+                    </tr>
+
+                    <tr>
+                        {% for field in range(1, 6) %}
+                            <td>
+                                {% if loop.first %}
+                                    <select class="pack" name="pack">
+                                        {% for addon_id, rare_name in the_rare.items() %}
+                                            {% if loop.first %}
+                                                <option value="2" selected disabled>rare</option>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% for addon_id, rare_name in the_rare.items() %}
+                                            <option value="{{ addon_id }}">{{ rare_name }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                {% else %}
+                                    <select class="pack" name="the_pack">
+                                        {% for addon_id, rare_name in the_rare.items() %}
+                                            <option value="{{ addon_id }}">{{ rare_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </table>
+
+                <p>
+                    <input type="submit" class="testbutton" value="Сохранить">
+                </p>
+            </form>
+        </div>
+    {% endif %}
+
+    {% if the_finish %}
+        <h2>Данные успешно сохранены</h2>
+        <p>
+            <a class="testbutton" href="{{ url_for('insert') }}">Добавить записи</a>
+        </p>
+    {% endif %}
 
 {% endblock %}

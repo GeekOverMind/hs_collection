@@ -18,27 +18,28 @@ def index():
 
 
 @app.route('/add')
-@app.route('/add/<int:addon>', methods=['GET', 'POST'])
+@app.route('/add/<addon>', methods=['GET', 'POST'])
 def insert(addon=None):
-    try:
-        with OpenDatabase(db_config) as cursor:
-            # get all addons
-            sql = """
-                SELECT addon_id, addon_name
-                FROM addon;
-                """
-            cursor.execute(sql)
-            # addon_id = [row[0] for row in cursor.fetchall()]
-            addons = dict(cursor.fetchall())
+    # try:
+    with OpenDatabase(db_config) as cursor:
+        # get all addons
+        sql = """
+            SELECT addon_id, addon_name
+            FROM addon;
+            """
+        cursor.execute(sql)
+        addons = dict(cursor.fetchall())
 
-            if not addon:
-                return render_template(
-                    'add.html',
-                    the_addons=addons,
-                    the_title='Выбор аддона'
-                    )
+        if not addon:
+            return render_template(
+                'add.html',
+                the_addons=addons,
+                the_title='Выбор аддона'
+                )
 
-            elif addon:
+        elif addon:
+            if addon != 'new':
+                addon = int(addon)
                 if addon in addons:
                     if request.method == 'POST':
                         pack = request.form.getlist('the_pack')
@@ -101,8 +102,45 @@ def insert(addon=None):
                             )
                 else:
                     return redirect(url_for('index'))
-    except Exception:  # change later
-        return r'¯\_(ツ)_/¯'
+            else:
+                if request.method == 'POST':
+                    sql = """
+                        SELECT MAX(addon_id)
+                        FROM addon;
+                        """
+                    cursor.execute(sql)
+                    addon_id = cursor.fetchone()[0] + 1
+
+                    addon_name = request.form.get('the_addon_name')
+                    sql = """
+                        INSERT INTO addon (
+                            addon_id,
+                            addon_name
+                            )
+                        VALUES (
+                            %s,
+                            %s
+                            );
+                        """
+                    cursor.execute(sql, (
+                        addon_id,
+                        addon_name
+                        )
+                    )
+
+                    file = request.files.get('the_logo')
+                    file.save('frontend/img/addons/%s.png' % addon_id)
+                    """file.save(url_for('static', filename='img/addons/%s.png' % addon_id))  # why dont work?"""
+                    return render_template('add.html',
+                                           the_addon_added=addon_name,
+                                           the_title='Выполнено')
+                else:
+                    return render_template('add.html',
+                                           the_new_addon='new',
+                                           the_title='Добавить аддон')
+    # except Exception:  # change later
+        # return r'¯\_(ツ)_/¯'
+
 
 @app.route('/view')
 @app.route('/view/data', methods=['POST'])
@@ -179,6 +217,7 @@ def view():
                     )
     except Exception:  # change later
         return r'¯\_(ツ)_/¯'
+
 
 if __name__ == '__main__':
     app.run(host='192.168.0.2', port='80', debug=True)
