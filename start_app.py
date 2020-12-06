@@ -6,7 +6,8 @@ app = Flask(__name__, static_folder="frontend/", template_folder="frontend")
 
 @app.errorhandler(404)
 def error(err):
-    return redirect(url_for('index'))
+    # return redirect(url_for('index'))
+    return render_template('error.html')
 
 
 @app.route('/')

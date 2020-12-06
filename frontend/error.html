@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block body %}
+    <img id="error" src="{{ url_for('static', filename='img/error.png') }}">
+    {% if message %}
+        {{ message }}
+    {% else %}
+        <h2>Ой, какая-то ошибка</h2>
+    {% endif %}
+
+{% endblock %}
