@@ -35,12 +35,13 @@
     {% endif %}
 
     {% if the_data %}
+        <h2>{{ name }}</h2>
         <table class="tableView">
             <tr>
                 <th>Pack number in addon</th>
                 <th>Pack</th>
                 <th>Rare</th>
-                <th>Opening date</th>
+                <th>Opening pack date</th>
             </tr>
             {% for the_addon_pack_id, the_addon_name, the_pack, the_date in the_data %}
                 <tr>

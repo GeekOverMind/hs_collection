@@ -1,9 +1,8 @@
 import mysql.connector
 import pandas as pd
 
-if __name__ == 'start_app':
-    from flask import make_response
-
+# if __name__ == 'start_app':
+#     from flask import render_template
 
 file_xlsx = 'database_table.xlsx'
 table_name = 'Packs'
@@ -31,12 +30,12 @@ class OpenDatabase:
             if __name__ == '__main__':
                 print(f'Ошибка: {err}')
             elif __name__ == 'start_app':
-                return make_response(f'<h2>Ошибка: {err}</h2>')
+                return render_template('error.html')
         except mysql.connector.errors.ProgrammingError as err:
             if __name__ == '__main__':
                 print(f'Ошибка: {err}')
             elif __name__ == 'start_app':
-                return make_response(f'<h2>Ошибка: {err}</h2>')
+                return render_template('error.html')
 
     def __exit__(self, exc_type, exc_value, exc_trace):
         self.conn.commit()
@@ -47,7 +46,11 @@ class OpenDatabase:
             with open('log_error.txt', 'a') as txt_file:
                 print(f'{exc_type}: {exc_value}', file=txt_file)
                 if __name__ == 'start_app':
-                    return make_response('<h2>Неполадки с базой данных</h2>')
+                    return render_template(
+                        'error.html',
+                        the_message='Неполадки с базой данных'
+                        )
+
 
 
 def get_columns_name(df):

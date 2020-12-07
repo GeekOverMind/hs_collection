@@ -4,9 +4,28 @@ from parser_data import db_config, OpenDatabase
 app = Flask(__name__, static_folder="frontend/", template_folder="frontend")
 
 
+def get_addons(cursor):
+    sql = """
+        SELECT addon_id, addon_name
+        FROM addon;
+        """
+    cursor.execute(sql)
+    addons = dict(cursor.fetchall())
+    return addons
+
+
+def get_rarities(cursor):
+    sql = """
+        SELECT rare_id, rare_name
+        FROM rare;
+        """
+    cursor.execute(sql)
+    rarities = dict(cursor.fetchall())
+    return rarities
+
+
 @app.errorhandler(404)
 def error(err):
-    # return redirect(url_for('index'))
     return render_template('error.html')
 
 
@@ -23,14 +42,11 @@ def index():
 def insert(addon=None):
     # try:
     with OpenDatabase(db_config) as cursor:
-        # get all addons
-        sql = """
-            SELECT addon_id, addon_name
-            FROM addon;
-            """
-        cursor.execute(sql)
-        addons = dict(cursor.fetchall())
 
+        # get all addons
+        addons = get_addons(cursor)
+
+        # choice addon
         if not addon:
             return render_template(
                 'add.html',
@@ -39,9 +55,15 @@ def insert(addon=None):
                 )
 
         elif addon:
+
+            # insert data
             if addon != 'new':
+
+                # data input for a pack
                 addon = int(addon)
                 if addon in addons:
+
+                    # adding to the database
                     if request.method == 'POST':
                         pack = request.form.getlist('the_pack')
 
@@ -56,7 +78,6 @@ def insert(addon=None):
 
                         # insert values from html-form
                         for card_id, rare_id in enumerate(pack, 1):
-                            # after refactor parser add condition for check empty string in a pack
                             sql = """
                                 INSERT INTO main_table (
                                     addon_id,
@@ -85,24 +106,25 @@ def insert(addon=None):
                             the_title='Данные добавлены'
                             )
 
+                    # prepare to adding to the database
                     else:
+
                         # get rare_id: rare_name for html-form
-                        sql = """
-                            SELECT rare_id, rare_name
-                            FROM rare;
-                            """
-                        cursor.execute(sql)
-                        rare = dict(cursor.fetchall())
+                        rarities = get_rarities(cursor)
 
                         return render_template(
                             'add.html',
                             the_addon_id=addon,
                             the_addon_name=addons[addon],
-                            the_rare=rare,
+                            the_rare=rarities,
                             the_title='Добавление данных'
                             )
+
+                # return to the home
                 else:
                     return redirect(url_for('index'))
+
+            # add a new addon
             else:
                 if request.method == 'POST':
                     sql = """
@@ -134,7 +156,7 @@ def insert(addon=None):
                     """file.save(url_for('static', filename='img/addons/%s.png' % addon_id))  # why dont work?"""
                     return render_template('add.html',
                                            the_addon_added=addon_name,
-                                           the_title='Выполнено')
+                                           the_title='Аддон добавлен')
                 else:
                     return render_template('add.html',
                                            the_new_addon='new',
@@ -148,6 +170,8 @@ def insert(addon=None):
 def view():
     try:
         with OpenDatabase(db_config) as cursor:
+
+            # show the result table
             if request.method == 'POST':
                 selected_addon_id = int(request.form.get('the_addon'))
                 rare = int(request.form.get('the_rare'))
@@ -185,7 +209,8 @@ def view():
                     selected_addon_id,
                     selected_addon_id,
                     rare,
-                    rare)
+                    rare
+                    )
                 )
                 data = ((addon_pack_id, addon_name, pack, date.strftime('%d.%m.%Y %H:%M:%S'))
                         for addon_pack_id, addon_name, pack, date in cursor.fetchall())
@@ -195,25 +220,19 @@ def view():
                     the_data=data,
                     the_title='Результаты запроса'
                     )
-            else:
-                sql = """
-                    SELECT addon_id, addon_name
-                    FROM addon;
-                    """
-                cursor.execute(sql)
-                addon = dict(cursor.fetchall())
 
-                sql = """
-                    SELECT rare_id, rare_name
-                    FROM rare;
-                    """
-                cursor.execute(sql)
-                rare = dict(cursor.fetchall())
+            # show the choice-result-form
+            else:
+                # get all addons
+                addons = get_addons(cursor)
+
+                # get all rarities
+                rarities = get_rarities(cursor)
 
                 return render_template(
                     'view.html',
-                    the_addon=addon,
-                    the_rare=rare,
+                    the_addon=addons,
+                    the_rare=rarities,
                     the_title='Запрос данных'
                     )
     except Exception:  # change later
