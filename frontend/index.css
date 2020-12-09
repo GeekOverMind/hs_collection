@@ -131,7 +131,7 @@ select.pack {
     -webkit-appearance: none;
 }
 
-.testbutton {
+.button {
 	display: inline-block;
 	position: relative;
 	background-color: #006fb2;
@@ -152,7 +152,7 @@ select.pack {
 	width: 250px;
 }
 
-.testbutton:hover, .testbutton:focus {
+.button:hover, .button:focus {
 	background-color: #007bc6;
 	border: solid 1px #79d4ff;
 	text-decoration: none;

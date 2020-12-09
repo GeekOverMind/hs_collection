@@ -1,8 +1,8 @@
 import mysql.connector
 import pandas as pd
 
-# if __name__ == 'start_app':
-#     from flask import render_template
+if __name__ == 'start_app':
+    from flask import render_template
 
 file_xlsx = 'database_table.xlsx'
 table_name = 'Packs'
@@ -61,25 +61,6 @@ class OpenDatabase:
                         'error.html',
                         the_message='Неполадки с базой данных'
                         )
-
-
-# Old func. Delete it
-def get_columns_name(dataframe):
-    """
-    Returns a dictionary of addons retrieved from the date_frame columns of the excel file
-    :param dataframe: pandas dataframe
-    :return: dictionary of addons
-    """
-    addons = {}
-    x, y = 0, 1
-
-    try:
-        while dataframe.columns[x]:
-            addons[y] = dataframe.columns[x]
-            x += 2
-            y += 1
-    except IndexError:
-        return addons
 
 
 def get_addon_names(dataframe):
@@ -309,86 +290,3 @@ def start_pars(config):
     create_table_rare(config)
     create_main_table(config)
     parser_to_sql(config)
-
-
-# Test function. Delete it
-def insert_data(addon_name: str, rare_name=()):
-    with OpenDatabase(db_config) as cursor:
-        sql = """
-            SELECT MAX(addon_pack_id)
-            FROM main_table
-            WHERE addon_id = (SELECT addon_id FROM addon WHERE addon_name = %s)
-            """
-        cursor.execute(sql, (addon_name,))
-        addon_pack_id = cursor.fetchone()[0] + 1
-        if rare_name:
-            for card, rare_name in enumerate(rare_name, 1):
-                sql = """
-                    INSERT INTO main_table (
-                        addon_id,
-                        card_id,
-                        rare_id,
-                        addon_pack_id
-                        )
-                    VALUES (
-                        (SELECT addon_id FROM addon WHERE addon_name = %s),
-                        %s,
-                        (SELECT rare_id FROM rare WHERE rare_name = %s),
-                        %s
-                        );
-                    """
-                cursor.execute(sql, (
-                    addon_name,
-                    card,
-                    rare_name,
-                    addon_pack_id
-                    )
-                )
-        else:
-            sql = """
-                INSERT INTO main_table (
-                    addon_id,
-                    card_id,
-                    rare_id,
-                    addon_pack_id
-                    )
-                VALUES (
-                    (SELECT addon_id FROM addon WHERE addon_name = %s),
-                    %s,
-                    %s,
-                    %s
-                    );
-                """
-            cursor.execute(sql, (
-                addon_name,
-                6,
-                9,
-                addon_pack_id
-                )
-            )
-
-
-# Test function. Delete it
-def show_results():
-    with OpenDatabase(db_config) as cursor:
-        sql = """
-            SELECT
-                m.addon_pack_id         'Addon Pack Number',
-                a.addon_name            'Addon Name',
-                c.card_number           'Card Number',
-                r.rare_name             'Rare Type',
-                m.date                  'Data'
-            FROM
-                addon                   a
-            INNER JOIN
-                main_table              m
-                ON a.addon_id = m.addon_id
-            INNER JOIN
-                card                    c
-                ON m.card_id = c.card_id
-            INNER JOIN
-                rare                    r
-                ON m.rare_id = r.rare_id
-            ORDER BY m.num_record;
-            """
-        cursor.execute(sql)
