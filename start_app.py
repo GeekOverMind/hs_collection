@@ -35,6 +35,16 @@ def get_rarities(cursor):
     return rarities
 
 
+def log_error():
+    """
+    Saves error records to log_error file
+    :return: nothing
+    """
+    err = traceback.format_exc()
+    with open('log_error.txt', 'a') as txt_file:
+        print(f'{err}', file=txt_file)
+
+
 @app.errorhandler(404)
 def error(err):
     return render_template('error.html')
@@ -173,9 +183,7 @@ def insert(addon=None):
                                                the_new_addon='new',
                                                the_title='Добавить аддон')
     except Exception:
-        err = traceback.format_exc()
-        with open('log_error.txt', 'a') as txt_file:
-            print(f'{err}', file=txt_file)
+        log_error()
         return render_template('error.html')
 
 
@@ -251,9 +259,7 @@ def view():
                     the_title='Запрос данных'
                     )
     except Exception:
-        err = traceback.format_exc()
-        with open('log_error.txt', 'a') as txt_file:
-            print(f'{err}', file=txt_file)
+        log_error()
         return render_template('error.html')
 
 
