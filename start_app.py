@@ -1,3 +1,4 @@
+import traceback
 from flask import Flask, redirect, render_template, request, url_for
 from parser_data import db_config, OpenDatabase
 
@@ -5,6 +6,11 @@ app = Flask(__name__, static_folder="frontend/", template_folder="frontend")
 
 
 def get_addons(cursor):
+    """
+    Returns a dictionary of addons retrieved from the database
+    :param cursor: cursor for database
+    :return: dictionary of addons
+    """
     sql = """
         SELECT addon_id, addon_name
         FROM addon;
@@ -15,6 +21,11 @@ def get_addons(cursor):
 
 
 def get_rarities(cursor):
+    """
+    Returns a dictionary of rarities retrieved from the database
+    :param cursor: cursor for database
+    :return: dictionary of rarities
+    """
     sql = """
         SELECT rare_id, rare_name
         FROM rare;
@@ -22,6 +33,16 @@ def get_rarities(cursor):
     cursor.execute(sql)
     rarities = dict(cursor.fetchall())
     return rarities
+
+
+def log_error():
+    """
+    Saves error records to log_error file
+    :return: nothing
+    """
+    err = traceback.format_exc()
+    with open('log_error.txt', 'a') as txt_file:
+        print(f'{err}', file=txt_file)
 
 
 @app.errorhandler(404)
@@ -40,129 +61,130 @@ def index():
 @app.route('/add')
 @app.route('/add/<addon>', methods=['GET', 'POST'])
 def insert(addon=None):
-    # try:
-    with OpenDatabase(db_config) as cursor:
+    try:
+        with OpenDatabase(db_config) as cursor:
 
-        # get all addons
-        addons = get_addons(cursor)
+            # get all addons
+            addons = get_addons(cursor)
 
-        # choice addon
-        if not addon:
-            return render_template(
-                'add.html',
-                the_addons=addons,
-                the_title='Выбор аддона'
-                )
+            # choice addon
+            if not addon:
+                return render_template(
+                    'add.html',
+                    the_addons=addons,
+                    the_title='Выбор аддона'
+                    )
 
-        elif addon:
+            elif addon:
 
-            # insert data
-            if addon != 'new':
+                # insert data
+                if addon != 'new':
 
-                # data input for a pack
-                addon = int(addon)
-                if addon in addons:
+                    # data input for a pack
+                    addon = int(addon)
+                    if addon in addons:
 
-                    # adding to the database
-                    if request.method == 'POST':
-                        pack = request.form.getlist('the_pack')
+                        # adding to the database
+                        if request.method == 'POST':
+                            pack = request.form.getlist('the_pack')
 
-                        # get current pack number
-                        sql = """
-                            SELECT MAX(addon_pack_id)
-                            FROM main_table
-                            WHERE addon_id = %s;
-                            """
-                        cursor.execute(sql, (addon,))
-                        pack_id = cursor.fetchone()[0] + 1
-
-                        # insert values from html-form
-                        for card_id, rare_id in enumerate(pack, 1):
+                            # get current pack number
                             sql = """
-                                INSERT INTO main_table (
-                                    addon_id,
-                                    addon_pack_id,
-                                    rare_id,
+                                SELECT MAX(addon_pack_id)
+                                FROM main_table
+                                WHERE addon_id = %s;
+                                """
+                            cursor.execute(sql, (addon,))
+                            pack_id = cursor.fetchone()[0] + 1
+
+                            # insert values from html-form
+                            for card_id, rare_id in enumerate(pack, 1):
+                                sql = """
+                                    INSERT INTO main_table (
+                                        addon_id,
+                                        addon_pack_id,
+                                        rare_id,
+                                        card_id
+                                        )
+                                    VALUES (
+                                        %s,
+                                        %s,
+                                        %s,
+                                        %s
+                                        );
+                                    """
+                                cursor.execute(sql, (
+                                    addon,
+                                    pack_id,
+                                    int(rare_id),
                                     card_id
                                     )
-                                VALUES (
-                                    %s,
-                                    %s,
-                                    %s,
-                                    %s
-                                    );
-                                """
-                            cursor.execute(sql, (
-                                addon,
-                                pack_id,
-                                int(rare_id),
-                                card_id
                                 )
-                            )
 
-                        return render_template(
-                            'add.html',
-                            the_finish=True,
-                            the_title='Данные добавлены'
-                            )
+                            return render_template(
+                                'add.html',
+                                the_finish=True,
+                                the_title='Данные добавлены'
+                                )
 
-                    # prepare to adding to the database
+                        # prepare to adding to the database
+                        else:
+
+                            # get rare_id: rare_name for html-form
+                            rarities = get_rarities(cursor)
+
+                            return render_template(
+                                'add.html',
+                                the_addon_id=addon,
+                                the_addon_name=addons[addon],
+                                the_rare=rarities,
+                                the_title='Добавление данных'
+                                )
+
+                    # return to the home
                     else:
+                        return redirect(url_for('index'))
 
-                        # get rare_id: rare_name for html-form
-                        rarities = get_rarities(cursor)
-
-                        return render_template(
-                            'add.html',
-                            the_addon_id=addon,
-                            the_addon_name=addons[addon],
-                            the_rare=rarities,
-                            the_title='Добавление данных'
-                            )
-
-                # return to the home
+                # add a new addon
                 else:
-                    return redirect(url_for('index'))
+                    if request.method == 'POST':
+                        sql = """
+                            SELECT MAX(addon_id)
+                            FROM addon;
+                            """
+                        cursor.execute(sql)
+                        addon_id = cursor.fetchone()[0] + 1
 
-            # add a new addon
-            else:
-                if request.method == 'POST':
-                    sql = """
-                        SELECT MAX(addon_id)
-                        FROM addon;
-                        """
-                    cursor.execute(sql)
-                    addon_id = cursor.fetchone()[0] + 1
-
-                    addon_name = request.form.get('the_addon_name')
-                    sql = """
-                        INSERT INTO addon (
+                        addon_name = request.form.get('the_addon_name')
+                        sql = """
+                            INSERT INTO addon (
+                                addon_id,
+                                addon_name
+                                )
+                            VALUES (
+                                %s,
+                                %s
+                                );
+                            """
+                        cursor.execute(sql, (
                             addon_id,
                             addon_name
                             )
-                        VALUES (
-                            %s,
-                            %s
-                            );
-                        """
-                    cursor.execute(sql, (
-                        addon_id,
-                        addon_name
                         )
-                    )
 
-                    file = request.files.get('the_logo')
-                    file.save('frontend/img/addons/%s.png' % addon_id)
-                    """file.save(url_for('static', filename='img/addons/%s.png' % addon_id))  # why dont work?"""
-                    return render_template('add.html',
-                                           the_addon_added=addon_name,
-                                           the_title='Аддон добавлен')
-                else:
-                    return render_template('add.html',
-                                           the_new_addon='new',
-                                           the_title='Добавить аддон')
-    # except Exception:  # change later
-        # return r'¯\_(ツ)_/¯'
+                        file = request.files.get('the_logo')
+                        file.save('frontend/img/addons/%s.png' % addon_id)
+                        """file.save(url_for('static', filename='img/addons/%s.png' % addon_id))  # why dont work?"""
+                        return render_template('add.html',
+                                               the_addon_added=addon_name,
+                                               the_title='Аддон добавлен')
+                    else:
+                        return render_template('add.html',
+                                               the_new_addon='new',
+                                               the_title='Добавить аддон')
+    except Exception:
+        log_error()
+        return render_template('error.html')
 
 
 @app.route('/view')
@@ -212,6 +234,7 @@ def view():
                     rare
                     )
                 )
+
                 data = ((addon_pack_id, addon_name, pack, date.strftime('%d.%m.%Y %H:%M:%S'))
                         for addon_pack_id, addon_name, pack, date in cursor.fetchall())
 
@@ -235,8 +258,9 @@ def view():
                     the_rare=rarities,
                     the_title='Запрос данных'
                     )
-    except Exception:  # change later
-        return r'¯\_(ツ)_/¯'
+    except Exception:
+        log_error()
+        return render_template('error.html')
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@
                 </div>
             {% endfor %}
         </div>
-        <a class="testbutton" href="{{ url_for('insert', addon='new')}}">Добавить новый аддон</a>
+        <a class="button" href="{{ url_for('insert', addon='new')}}">Добавить новый аддон</a>
     {% endif %}
 
     {% if the_new_addon %}
@@ -29,7 +29,7 @@
                 <input accept="image/png" type="file" name="the_logo" required>
             </div>
             <p>
-                <input class="testbutton" type="submit" value="Cохранить">
+                <input class="button" type="submit" value="Cохранить">
             </p>
         </form>
     {% endif %}
@@ -84,7 +84,7 @@
                 </table>
 
                 <p>
-                    <input type="submit" class="testbutton" value="Добавить">
+                    <input type="submit" class="button" value="Добавить">
                 </p>
             </form>
         </div>
@@ -93,8 +93,7 @@
     {% if the_finish %}
         <h2>Данные успешно добавлены</h2>
         <p>
-            <a class="testbutton" href="{{ url_for('insert') }}">Добавить еще данные</a>
+            <a class="button" href="{{ url_for('insert') }}">Добавить еще данные</a>
         </p>
     {% endif %}
-
 {% endblock %}

@@ -16,7 +16,7 @@ h3 {
     line-height: 0px;
 }
 
-img#logo {
+/*img#logo {
     width: 50%;
     margin-left: 25%;
     margin-right: 25%;
@@ -26,7 +26,7 @@ img#error {
     width: 20%;
     margin-left: 40%;
     margin-right: 40%;
-}
+}*/
 
 div.main {
     width: 50%;
@@ -58,11 +58,21 @@ div.view {
     margin: 10px;
 }
 
-div.cardSelected {
-    width: 60%;
-    margin-left: 20%;
-    margin-right: 20%;
-    padding: 0px;
+@media screen and (min-width: 1080px) {
+    div.cardSelected {
+        width: 60%;
+        margin-left: 20%;
+        margin-right: 20%;
+        padding: 0px;
+    }
+}
+
+@media screen and (max-width: 1080px) {
+    div.main {
+        width: 80%;
+        margin-left: 10%;
+        margin-right: 10%;
+    }
 }
 
 table {
@@ -76,7 +86,6 @@ table {
 td, th, tr {
     padding: 0px;
     vertical-align: center;
-    text-align: center;
 }
 
 table.tableView {
@@ -131,7 +140,7 @@ select.pack {
     -webkit-appearance: none;
 }
 
-.testbutton {
+.button {
 	display: inline-block;
 	position: relative;
 	background-color: #006fb2;
@@ -144,17 +153,29 @@ select.pack {
 	padding: 10px 0px;
 	outline-offset: 2px;
 	text-decoration: none;
-	/*text-align: center;*/
 	cursor: pointer;
 	overflow: visible;
-	/*max-width: 100%;*/
 	transition: color 200ms, background-color 200ms, border-color 200ms;
 	width: 250px;
 }
 
-.testbutton:hover, .testbutton:focus {
+.button:hover, .button:focus {
 	background-color: #007bc6;
 	border: solid 1px #79d4ff;
 	text-decoration: none;
 	color: #fff:
 }
+
+footer#Github {
+    color: #fff;
+}
+
+footer#Github a:link {
+    color: #007bc6;
+    text-decoration: none;
+}
+
+footer#Github a:visited {
+    color: #007bc6;
+    text-decoration: none;
+ }
