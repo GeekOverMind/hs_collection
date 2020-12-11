@@ -1,0 +1,181 @@
+body {
+    background-image: url("img/background.jpg");
+    font-family: "Segoe UI", Arial, sans-serif;
+    text-align: center;
+    margin: 0px;
+}
+
+h2 {
+    color: #dddddd;
+    font-size: 20px;
+}
+
+h3 {
+    color: #dddddd;
+    font-size: 16px;
+    line-height: 0px;
+}
+
+/*img#logo {
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+img#error {
+    width: 20%;
+    margin-left: 40%;
+    margin-right: 40%;
+}*/
+
+div.main {
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+div.addons {
+    display: inline-block;
+}
+
+div.newAddon {
+    width: 20%;
+    margin-left: 40%;
+    margin-right: 40%;
+}
+
+div.newAddon input {
+    width: 75%;
+    color: #dddddd;
+    text-align: center;
+    padding: 2px 2px 5px 2px;
+    background-color: #40311c;
+    border: thin solid #ceb256;
+}
+
+div.view {
+    display: inline-block;
+    margin: 10px;
+}
+
+@media screen and (min-width: 1080px) {
+    div.cardSelected {
+        width: 60%;
+        margin-left: 20%;
+        margin-right: 20%;
+        padding: 0px;
+    }
+}
+
+@media screen and (max-width: 1080px) {
+    div.main {
+        width: 80%;
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+}
+
+table {
+    width: 100%;
+    margin: 0%;
+    padding: 0px;
+    border-collapse: collapse;
+    color: #dddddd;
+}
+
+td, th, tr {
+    padding: 0px;
+    vertical-align: center;
+}
+
+table.tableView {
+    width: 98%;
+    margin: 1%;
+    padding: 0px;
+    border-collapse: collapse;
+    color: #dddddd;
+}
+
+table.tableView td, table.tableView th, table.tableView tr {
+    padding: 0px;
+    vertical-align: center;
+    text-align: center;
+    border: solid #40311c;
+}
+
+select {
+    display: inline-block;
+	position: relative;
+	background-color: #006fb2;
+	border: solid 1px #00aeff;
+	font-family: "Segoe UI", Arial, sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	color: #fff;
+	padding: 10px 0px;
+	outline-offset: 2px;
+	text-decoration: none;
+	text-align: center;
+	cursor: pointer;
+	overflow: visible;
+	transition: color 200ms, background-color 200ms, border-color 200ms;
+	width: 250px;
+	-webkit-appearance: none;
+}
+
+select:hover, select:focus {
+	background-color: #007bc6;
+	border: solid 1px #79d4ff;
+	text-decoration: none;
+	color: #fff:
+}
+
+select.pack {
+    width: 75%;
+    color:  #006fb2;
+    text-align: center;
+    padding: 2px 0px 5px 0px;
+    background-color: #40311c;
+    border: thin solid #ceb256;
+    -webkit-appearance: none;
+}
+
+.button {
+	display: inline-block;
+	position: relative;
+	background-color: #006fb2;
+	border: solid 1px #00aeff;
+	font-family: "Segoe UI", Arial, sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1;
+	color: #fff;
+	padding: 10px 0px;
+	outline-offset: 2px;
+	text-decoration: none;
+	cursor: pointer;
+	overflow: visible;
+	transition: color 200ms, background-color 200ms, border-color 200ms;
+	width: 250px;
+}
+
+.button:hover, .button:focus {
+	background-color: #007bc6;
+	border: solid 1px #79d4ff;
+	text-decoration: none;
+	color: #fff:
+}
+
+footer#Github {
+    color: #fff;
+}
+
+footer#Github a:link {
+    color: #007bc6;
+    text-decoration: none;
+}
+
+footer#Github a:visited {
+    color: #007bc6;
+    text-decoration: none;
+ }

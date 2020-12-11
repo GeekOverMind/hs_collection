@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block body %}
+    <header><h1>{{ title }}</h1></header>
+    <p>
+        <a class="button" href="{{ url_for('insert') }}">Добавить данные</a>
+    </p>
+
+    <p>
+        <a class="button" href="{{ url_for('view') }}">Просмотреть данные</a>
+    </p>
+    <footer id="Github">
+        Исходный код проекта: <a href="https://github.com/GeekOverMind/hs_collection">GitHub</a>
+    </footer>
+{% endblock %}

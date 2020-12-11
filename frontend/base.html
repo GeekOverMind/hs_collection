@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ the_title }}</title>
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index.css') }}"/>
+    </head>
+    <body>
+        {% if the_title == 'Главная' %}
+            <img id="logo" src="{{ url_for('static', filename='img/logo_1.png') }}">
+        {% endif %}
+        {% block body %}
+
+        {% endblock %}
+    <footer>
+        {% if the_title != 'Главная' %}
+            <p>
+                <a class="button" href="{{ url_for('index') }}">На главную</a>
+            </p>
+        {% endif %}
+    </footer>
+    </body>
+</html>

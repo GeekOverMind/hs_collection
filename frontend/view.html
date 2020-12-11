@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block body %}
+    {% if the_addon %}
+        <form method="POST" action="/view/data">
+            <div class="view">
+                <h2>Аддон:</h2>
+                <select name="the_addon">
+                    {% for the_addon_id, the_addon_name in the_addon.items() %}
+                        {% if loop.first %}
+                            <option name="All addons" value="0">All</option>
+                        {% endif %}
+
+                        <option name="{{ the_addon_name }}" value="{{ the_addon_id }}">{{ the_addon_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="view">
+                <h2>Редкость:</h2>
+                <select name="the_rare">
+                    {% for the_rare_id, the_rare_name in the_rare.items() %}
+                        {% if loop.first %}
+                            <option name="All rarities" value="0">All</option>
+                        {% endif %}
+
+                    <option name="{{ the_rare_name }}" value="{{ the_rare_id }}">{{ the_rare_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <p>
+                <input type="submit" class="button" value="Просмотреть">
+            </p>
+        </form>
+    {% endif %}
+
+    {% if the_data %}
+        <h2>{{ name }}</h2>
+        <table class="tableView">
+            <tr>
+                <th>Pack number in addon</th>
+                <th>Addon name</th>
+                <th>Rarities</th>
+                <th>Opening pack date</th>
+            </tr>
+            {% for the_addon_pack_id, the_addon_name, the_pack, the_date in the_data %}
+                <tr>
+                    <td>{{ the_addon_pack_id }}</td>
+                    <td>{{ the_addon_name }}</td>
+                    <td>{{ the_pack }}</td>
+                    <td>{{ the_date }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}
